@@ -13,7 +13,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          BBC Learning English
+          English Listening & Speaking for Daily Life
         </motion.p>
         <motion.h1
           className="text-4xl font-black tracking-normal text-slate-950 sm:text-6xl"
@@ -29,7 +29,7 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.16 }}
         >
-          简单版或普通版都可以，每天完成听力、阅读、词汇和听写训练。
+          每天完成听力、阅读、词汇训练。
         </motion.p>
       </div>
     </section>

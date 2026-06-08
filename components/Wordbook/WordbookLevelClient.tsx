@@ -3,8 +3,21 @@
 import { useEffect, useMemo, useState } from "react";
 import { Check, ExternalLink, Search, Volume2 } from "lucide-react";
 import { CandyCard } from "@/components/UI/CandyCard";
+import { AUTH_CHANGE_EVENT, AUTH_COOKIE_KEY, AUTH_STORAGE_KEY, isAuthUser } from "@/lib/auth";
 import { speakBritishMale } from "@/lib/speech";
 import type { WordbookHeadword, WordbookLevel } from "@/lib/wordbook";
+
+function readCurrentUser() {
+  if (typeof window === "undefined") return "guest";
+  const saved =
+    window.localStorage.getItem(AUTH_STORAGE_KEY) ??
+    document.cookie
+      .split("; ")
+      .find((item) => item.startsWith(`${AUTH_COOKIE_KEY}=`))
+      ?.split("=")[1];
+
+  return saved && isAuthUser(saved) ? saved : "guest";
+}
 
 export function WordbookLevelClient({
   level,
@@ -15,13 +28,32 @@ export function WordbookLevelClient({
 }) {
   const [query, setQuery] = useState("");
   const [knownWords, setKnownWords] = useState<Set<string>>(new Set());
-  const storageKey = `candy-wordbook-known-${level.slug}`;
+  const [currentUser, setCurrentUser] = useState("guest");
+  const storageKey = `candy-wordbook-known-${currentUser}-${level.slug}`;
+
+  useEffect(() => {
+    setCurrentUser(readCurrentUser());
+
+    function syncUser() {
+      setCurrentUser(readCurrentUser());
+    }
+
+    window.addEventListener(AUTH_CHANGE_EVENT, syncUser);
+    window.addEventListener("storage", syncUser);
+
+    return () => {
+      window.removeEventListener(AUTH_CHANGE_EVENT, syncUser);
+      window.removeEventListener("storage", syncUser);
+    };
+  }, []);
 
   useEffect(() => {
     try {
       const saved = window.localStorage.getItem(storageKey);
       if (saved) {
         setKnownWords(new Set(JSON.parse(saved) as string[]));
+      } else {
+        setKnownWords(new Set());
       }
     } catch {
       setKnownWords(new Set());
@@ -77,6 +109,9 @@ export function WordbookLevelClient({
             <p className="text-sm font-black text-[#FF7EB6]">Wordbook</p>
             <h1 className="mt-1 text-3xl font-black text-slate-950 sm:text-4xl">{level.title}</h1>
             <p className="mt-3 max-w-2xl text-base font-bold leading-7 text-slate-500">{level.description}</p>
+            <p className="mt-2 text-sm font-black text-slate-400">
+              当前账号：{currentUser === "guest" ? "未登录" : currentUser}
+            </p>
           </div>
 
           <div className="rounded-[22px] bg-white px-5 py-4 shadow-sm">
@@ -121,7 +156,17 @@ export function WordbookLevelClient({
                 </button>
 
                 <div className="min-w-0">
-                  <p className="font-serif text-3xl font-black text-slate-950">{word.headword}</p>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <p className="font-serif text-3xl font-black text-slate-950">{word.headword}</p>
+                    <button
+                      className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#7AE582] text-slate-950 shadow-sm"
+                      type="button"
+                      aria-label={`播放 ${word.headword} 发音`}
+                      onClick={() => speakBritishMale(word.headword, { rate: 0.82 })}
+                    >
+                      <Volume2 size={20} />
+                    </button>
+                  </div>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {word.partOfSpeech ? (
                       <span className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white">
@@ -144,7 +189,17 @@ export function WordbookLevelClient({
                     </div>
                     <div>
                       {word.example ? (
-                        <p className="text-sm font-bold leading-6 text-slate-700">{word.example}</p>
+                        <div className="flex items-start gap-2">
+                          <p className="min-w-0 text-sm font-bold leading-6 text-slate-700">{word.example}</p>
+                          <button
+                            className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#EAF8FF] text-[#2183BD]"
+                            type="button"
+                            aria-label={`播放 ${word.headword} 例句`}
+                            onClick={() => speakBritishMale(word.example ?? "", { rate: 0.86 })}
+                          >
+                            <Volume2 size={16} />
+                          </button>
+                        </div>
                       ) : null}
                       {word.exampleZh ? (
                         <p className="mt-1 text-sm font-bold leading-6 text-slate-400">{word.exampleZh}</p>
@@ -159,14 +214,6 @@ export function WordbookLevelClient({
                 </div>
 
                 <div className="flex gap-2 lg:justify-end">
-                  <button
-                    className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#7AE582] text-slate-950 shadow-sm"
-                    type="button"
-                    aria-label={`播放 ${word.headword} 发音`}
-                    onClick={() => speakBritishMale(word.headword, { rate: 0.82 })}
-                  >
-                    <Volume2 size={21} />
-                  </button>
                   <a
                     className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-slate-200 bg-white text-slate-600"
                     href={`https://dictionary.cambridge.org/dictionary/english-chinese-simplified/${encodeURIComponent(word.headword)}`}
