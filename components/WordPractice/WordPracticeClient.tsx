@@ -8,32 +8,34 @@ import type { WordbookHeadword, WordbookLevel } from "@/lib/wordbook";
 
 type CheckState = "idle" | "correct" | "wrong";
 
+const answerColors = [
+  "text-[#FF7EB6]",
+  "text-[#6EC6FF]",
+  "text-[#7AE582]",
+  "text-[#FFC971]",
+  "text-[#BFA2FF]",
+  "text-[#FF9D6E]"
+];
+
 function normalizeAnswer(value: string) {
   return value.trim().toLowerCase();
 }
 
-function maskWord(word: string) {
+function getVisibleIndexes(word: string) {
   const letters = word.split("");
   const revealableIndexes = letters
     .map((letter, index) => (/[A-Za-z]/.test(letter) ? index : -1))
     .filter((index) => index >= 0);
 
   if (revealableIndexes.length <= 1) {
-    return letters.map((letter) => (/[A-Za-z]/.test(letter) ? "_" : letter)).join(" ");
+    return new Set<number>();
   }
 
   const minVisible = Math.max(1, Math.floor(revealableIndexes.length * 0.3));
   const maxVisible = Math.max(minVisible, Math.floor(revealableIndexes.length * 0.5));
   const visibleCount = minVisible + Math.floor(Math.random() * (maxVisible - minVisible + 1));
   const shuffledIndexes = [...revealableIndexes].sort(() => Math.random() - 0.5);
-  const visibleIndexes = new Set(shuffledIndexes.slice(0, visibleCount));
-
-  return letters
-    .map((letter, index) => {
-      if (!/[A-Za-z]/.test(letter)) return letter;
-      return visibleIndexes.has(index) ? letter : "_";
-    })
-    .join(" ");
+  return new Set(shuffledIndexes.slice(0, visibleCount));
 }
 
 function randomIndex(total: number, currentIndex: number | null) {
@@ -59,12 +61,19 @@ export function WordPracticeClient({
   const [checkState, setCheckState] = useState<CheckState>("idle");
   const [correctCount, setCorrectCount] = useState(0);
   const nextTimer = useRef<number | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const currentWord = words[wordIndex];
 
-  const maskedWord = useMemo(() => {
-    if (!currentWord) return "";
-    return maskWord(currentWord.headword);
+  const visibleIndexes = useMemo(() => {
+    if (!currentWord) return new Set<number>();
+    return getVisibleIndexes(currentWord.headword);
   }, [currentWord]);
+  const colorOffset = useMemo(() => {
+    if (!currentWord) return 0;
+    return Math.floor(Math.random() * answerColors.length);
+  }, [currentWord]);
+
+  const answerLetters = answer.split("");
 
   useEffect(() => {
     setWordIndex(randomIndex(words.length, null));
@@ -102,6 +111,17 @@ export function WordPracticeClient({
     setCheckState("correct");
     setCorrectCount((current) => current + 1);
     nextTimer.current = window.setTimeout(goNext, 650);
+  }
+
+  function updateAnswer(value: string) {
+    if (!currentWord || checkState === "correct") return;
+    const maxLength = currentWord.headword.length;
+    const cleaned = value
+      .replace(/\s+/g, "")
+      .slice(0, maxLength);
+
+    setAnswer(cleaned);
+    setCheckState("idle");
   }
 
   if (words.length === 0) {
@@ -161,31 +181,83 @@ export function WordPracticeClient({
             </p>
           ) : null}
 
-          <div className="mt-8 rounded-[24px] bg-slate-950 px-5 py-5 font-serif text-4xl font-black tracking-normal text-white sm:text-6xl">
-            {maskedWord}
-          </div>
+          <button
+            className={`mt-8 w-full rounded-[24px] bg-slate-950 px-4 py-5 text-left shadow-inner outline-none transition focus:ring-4 focus:ring-[#FF7EB6]/20 ${
+              checkState === "correct"
+                ? "ring-4 ring-[#7AE582]/30"
+                : checkState === "wrong"
+                  ? "ring-4 ring-[#FF7EB6]/30"
+                  : ""
+            }`}
+            type="button"
+            onClick={() => inputRef.current?.focus()}
+          >
+            <span className="flex flex-wrap justify-center gap-2 font-serif text-4xl font-black tracking-normal sm:gap-3 sm:text-6xl">
+              {currentWord.headword.split("").map((letter, index) => {
+                const typedLetter = answerLetters[index];
+                const isLetter = /[A-Za-z]/.test(letter);
+                const isVisibleHint = visibleIndexes.has(index);
+
+                if (!isLetter) {
+                  return (
+                    <span key={`${letter}-${index}`} className="min-w-6 text-center text-white">
+                      {letter}
+                    </span>
+                  );
+                }
+
+                if (typedLetter) {
+                  return (
+                    <span
+                      key={`${letter}-${index}`}
+                      className={`min-w-9 border-b-4 border-current pb-1 text-center ${
+                        isVisibleHint ? "text-[#7AE582]" : answerColors[(index + colorOffset) % answerColors.length]
+                      }`}
+                    >
+                      {typedLetter}
+                    </span>
+                  );
+                }
+
+                if (isVisibleHint) {
+                  return (
+                    <span key={`${letter}-${index}`} className="min-w-9 border-b-4 border-white pb-1 text-center text-white">
+                      {letter}
+                    </span>
+                  );
+                }
+
+                return (
+                  <span key={`${letter}-${index}`} className="min-w-9 border-b-4 border-white/75 pb-1 text-center text-transparent">
+                    _
+                  </span>
+                );
+              })}
+            </span>
+          </button>
 
           <input
-            className={`mt-6 min-h-14 w-full rounded-full border px-6 text-center text-xl font-black outline-none transition sm:text-2xl ${
-              checkState === "correct"
-                ? "border-[#7AE582] bg-white text-[#157A33] ring-4 ring-[#7AE582]/20"
-                : checkState === "wrong"
-                  ? "border-[#FF7EB6] bg-white text-[#B52B70] ring-4 ring-[#FF7EB6]/20"
-                  : "border-slate-200 bg-white text-slate-950 focus:border-[#FF7EB6] focus:ring-4 focus:ring-[#FF7EB6]/15"
-            }`}
-            placeholder="输入英文单词，按空格确认"
+            ref={inputRef}
+            className="sr-only"
+            aria-label="输入英文单词，按空格确认"
             value={answer}
             autoFocus
             onChange={(event) => {
-              setAnswer(event.target.value);
-              if (checkState !== "correct") {
-                setCheckState("idle");
-              }
+              updateAnswer(event.target.value);
             }}
             onKeyDown={(event) => {
               if (event.key === " ") {
                 event.preventDefault();
                 checkAnswer();
+                return;
+              }
+
+              if (event.key === "Backspace") {
+                event.preventDefault();
+                if (checkState !== "correct") {
+                  setAnswer((current) => current.slice(0, -1));
+                  setCheckState("idle");
+                }
               }
             }}
           />
