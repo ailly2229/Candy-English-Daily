@@ -2,6 +2,8 @@
 
 A candy-colored personal English learning web app for daily BBC Learning English practice, with both easy and standard sources.
 
+web：candy-english-daily.vercel.app
+
 ## Features
 
 - Next.js 15 App Router with TypeScript
