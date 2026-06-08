@@ -1,0 +1,84 @@
+[
+  {
+    "id": "easy-20260522",
+    "slug": "easy-real-easy-english-talking-about-names",
+    "source": "easy",
+    "title": "Real Easy English: Talking about names",
+    "date": "2026-05-22",
+    "duration": 10,
+    "audio": "https://open.live.bbc.co.uk/mediaselector/6/redir/version/2.0/mediaset/audio-nondrm-download-rss/proto/https/vpid/p0nmqm0z.mp3",
+    "content": "Neil and Becca talk about who they were named after, whether their names are common or unusual, and Georgie's funny nickname. This easy English conversation helps learners practise everyday listening and learn simple vocabulary for talking about names.",
+    "sentences": [
+      "Neil and Becca talk about who they were named after",
+      "They discuss whether their names are common or unusual",
+      "This easy conversation helps learners practise everyday listening"
+    ],
+    "vocabulary": [
+      {
+        "word": "named after",
+        "meaning": "以某人命名",
+        "phonetic": "/neɪmd ˈɑːftə/",
+        "example": "She was named after her grandmother."
+      },
+      {
+        "word": "common",
+        "meaning": "常见的",
+        "phonetic": "/ˈkɒmən/",
+        "example": "Emma is a common name in many English-speaking countries."
+      },
+      {
+        "word": "unusual",
+        "meaning": "不寻常的",
+        "phonetic": "/ʌnˈjuːʒuəl/",
+        "example": "His name is unusual, so people often ask him about it."
+      },
+      {
+        "word": "nickname",
+        "meaning": "昵称",
+        "phonetic": "/ˈnɪkneɪm/",
+        "example": "Her friends call her by a funny nickname."
+      }
+    ]
+  },
+  {
+    "id": "standard-20250123",
+    "slug": "standard-how-the-world-learned-to-love-fast-food",
+    "source": "standard",
+    "title": "How the world learned to love fast food",
+    "date": "2025-01-23",
+    "duration": 15,
+    "audio": "https://open.live.bbc.co.uk/mediaselector/6/redir/version/2.0/mediaset/audio-nondrm-download-rss-low/proto/https/vpid/p0klhsyp.mp3",
+    "content": "Fast food changed how people eat in many parts of the world. In this episode, the presenters discuss why quick meals became popular, how familiar brands travelled across borders, and what fast food can tell us about culture, convenience and ambition.",
+    "sentences": [
+      "Fast food changed how people eat in many parts of the world",
+      "Quick meals became popular because they were convenient",
+      "Familiar brands travelled across borders and became part of culture"
+    ],
+    "vocabulary": [
+      {
+        "word": "can-do attitude",
+        "meaning": "积极进取的态度",
+        "phonetic": "/ˌkæn ˈduː ˌætɪtjuːd/",
+        "example": "A can-do attitude helps people keep going when work is difficult."
+      },
+      {
+        "word": "long-standing",
+        "meaning": "长期存在的",
+        "phonetic": "/ˌlɒŋ ˈstændɪŋ/",
+        "example": "The town has a long-standing tradition of outdoor markets."
+      },
+      {
+        "word": "variation",
+        "meaning": "变化形式",
+        "phonetic": "/ˌveəriˈeɪʃn/",
+        "example": "The restaurant serves a local variation of a classic dish."
+      },
+      {
+        "word": "convenience",
+        "meaning": "便利",
+        "phonetic": "/kənˈviːniəns/",
+        "example": "Many people choose fast food because of convenience."
+      }
+    ]
+  }
+]
