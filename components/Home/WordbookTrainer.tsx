@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, ChevronRight, Keyboard, Volume2, XCircle } from "lucide-react";
+import { CheckCircle2, ChevronRight, ExternalLink, Keyboard, Volume2, XCircle } from "lucide-react";
 import { CandyButton } from "@/components/UI/CandyButton";
 import { CandyCard } from "@/components/UI/CandyCard";
 import type { WordLevel, WordbookItem } from "@/lib/wordbook";
@@ -14,7 +14,9 @@ const levelColors: Record<WordLevel, string> = {
   A2: "bg-[#91E4DC] text-slate-950",
   B1: "bg-[#B8E879] text-slate-950",
   B2: "bg-[#FFC971] text-slate-950",
-  C1: "bg-[#BFA2FF] text-slate-950"
+  C1: "bg-[#BFA2FF] text-slate-950",
+  C2: "bg-[#FF7EB6] text-white",
+  Phrases: "bg-slate-950 text-white"
 };
 
 function maskWord(word: string) {
@@ -76,7 +78,7 @@ export function WordbookTrainer({ words }: { words: WordbookItem[] }) {
           <h2 className="mt-1 text-2xl font-black text-slate-950">单词本</h2>
         </div>
 
-        <div className="grid grid-cols-4 gap-2 rounded-full border border-slate-100 bg-white p-1 shadow-sm">
+        <div className="grid grid-cols-3 gap-2 rounded-[24px] border border-slate-100 bg-white p-1 shadow-sm sm:grid-cols-6 sm:rounded-full">
           {WORD_LEVELS.map((item) => {
             const active = level === item;
 
@@ -126,10 +128,23 @@ export function WordbookTrainer({ words }: { words: WordbookItem[] }) {
               <span className={`rounded-full px-4 py-2 text-lg font-black ${levelColors[currentWord.level]}`}>
                 {currentWord.level}
               </span>
+              <span className="rounded-full bg-white px-4 py-2 text-lg font-black text-slate-500">
+                {currentWord.category === "phrase" ? "phrase" : "word"}
+              </span>
             </div>
 
             <p className="mt-6 text-2xl leading-9 text-slate-800">{currentWord.definition}</p>
             <p className="mt-3 text-xl font-bold text-slate-500">{currentWord.meaning}</p>
+
+            <a
+              className="candy-button mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-black text-slate-700 shadow-sm"
+              href={currentWord.cambridgeUrl}
+              rel="noreferrer"
+              target="_blank"
+            >
+              Cambridge
+              <ExternalLink size={16} />
+            </a>
 
             <div className="mt-8 border-t border-[#E4EED7] pt-6">
               <span className="rounded-xl bg-slate-950 px-4 py-2 text-lg font-black italic text-white">
