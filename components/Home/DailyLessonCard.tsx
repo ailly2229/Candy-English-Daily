@@ -35,10 +35,6 @@ export function DailyLessonCard({ lesson }: { lesson: Lesson }) {
               {lesson.title}
             </h2>
             <p className="mt-3 text-sm font-bold text-slate-400">{formatLessonDate(lesson.date)}</p>
-            <p className="mt-3 inline-flex rounded-full bg-slate-50 px-3 py-1 text-sm font-black text-slate-500">
-              {source.label} · {source.description}
-            </p>
-            <p className="mt-5 max-w-2xl text-base leading-8 text-slate-500">{lesson.content}</p>
           </div>
 
           <CandyLink

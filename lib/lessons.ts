@@ -45,6 +45,25 @@ export function getDailyLessonsBySource(): Record<LessonSource, Lesson> {
   );
 }
 
+export function getHistoryLessonsBySource(): Record<LessonSource, Lesson[]> {
+  const twoMonthsAgo = new Date();
+  twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+
+  return SOURCE_ORDER.reduce(
+    (items, source) => {
+      const lessons = getLessonsBySource(source)
+        .filter((lesson) => new Date(`${lesson.date}T00:00:00`) >= twoMonthsAgo)
+        .sort((a, b) => b.date.localeCompare(a.date));
+
+      return {
+        ...items,
+        [source]: lessons
+      };
+    },
+    {} as Record<LessonSource, Lesson[]>
+  );
+}
+
 export function getLessonBySlug(slug: string): Lesson | undefined {
   return getLessons().find((lesson) => lesson.slug === slug);
 }

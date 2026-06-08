@@ -17,6 +17,7 @@ const SOURCES = {
 
 const SOURCE_ORDER = ["easy", "standard"];
 const DRY_RUN = process.argv.includes("--dry-run");
+const HISTORY_MONTHS = 2;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, "..");
 const LESSONS_PATH = path.join(ROOT_DIR, "data", "lessons.json");
@@ -58,6 +59,11 @@ const VOCAB_TRANSLATIONS = {
 function readTag(xml, tag) {
   const match = xml.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i"));
   return match ? decodeXml(match[1].replace(/^<!\[CDATA\[/, "").replace(/\]\]>$/, "").trim()) : "";
+}
+
+function readRawTag(xml, tag) {
+  const match = xml.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i"));
+  return match ? match[1].replace(/^<!\[CDATA\[/, "").replace(/\]\]>$/, "").trim() : "";
 }
 
 function decodeXml(value) {
@@ -104,16 +110,29 @@ function extractAudio(itemXml) {
   return (secure?.[1] ?? enclosure?.[1] ?? "").replace("http://", "https://").replace("/proto/http/", "/proto/https/");
 }
 
-function extractPageUrl(itemXml, description) {
+function episodePathDate(date) {
+  return date.toISOString().slice(2, 10).replaceAll("-", "");
+}
+
+function fallbackPageUrl(source, date) {
+  const shortDate = episodePathDate(date);
+  if (source === "easy") {
+    return `https://www.bbc.co.uk/learningenglish/english/features/real-easy-english/${shortDate}`;
+  }
+
+  return `https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_${date.getUTCFullYear()}/ep-${shortDate}`;
+}
+
+function extractPageUrl(itemXml, description, source, date) {
   const link = readTag(itemXml, "link");
   const urls = Array.from(description.matchAll(/https?:\/\/www\.bbc\.co\.uk\/learningenglish\/[^\s<"]+/gi)).map(
     ([url]) => url.replace(/[.,;!?)]+$/, "")
   );
   const episodeUrl =
     urls.find((url) => /\/features\/(?:real-easy-english|6-minute-english_\d{4})\/(?:ep-)?\d+/i.test(url)) ??
-    urls.find((url) => !/\/send\//i.test(url));
+    urls.find((url) => !/\/(?:send|newsletters|easy_course|medium_course|hard_course)(?:\/|$)/i.test(url));
 
-  return (episodeUrl ?? link).replace(/^http:\/\//, "https://");
+  return (episodeUrl ?? fallbackPageUrl(source, date) ?? link).replace(/^http:\/\//, "https://");
 }
 
 function extractSentences(content) {
@@ -248,8 +267,7 @@ async function fetchPageData(pageUrl) {
   };
 }
 
-async function buildLessonFromFeed(xml, source) {
-  const item = xml.match(/<item\b[\s\S]*?<\/item>/i)?.[0];
+async function buildLessonFromItem(item, source) {
   if (!item) {
     throw new Error(`No ${SOURCES[source].name} item found in RSS feed.`);
   }
@@ -261,8 +279,9 @@ async function buildLessonFromFeed(xml, source) {
     readTag(item, "itunes:summary") ||
     readTag(item, "description") ||
     `${SOURCES[source].name} lesson.`;
+  const rawDescription = readRawTag(item, "itunes:summary") || readRawTag(item, "description");
   const content = description.replace(/\s+/g, " ");
-  const pageUrl = extractPageUrl(item, description);
+  const pageUrl = extractPageUrl(item, rawDescription || description, source, date);
   const pageData = await fetchPageData(pageUrl);
   const transcript = pageData.transcript || content;
 
@@ -293,12 +312,25 @@ async function fetchLesson(source) {
     throw new Error(`${SOURCES[source].name} feed request failed with ${response.status}.`);
   }
 
-  return buildLessonFromFeed(await response.text(), source);
+  const xml = await response.text();
+  const cutoff = new Date();
+  cutoff.setMonth(cutoff.getMonth() - HISTORY_MONTHS);
+
+  const items = xml.match(/<item\b[\s\S]*?<\/item>/gi) ?? [];
+  const recentItems = items.filter((item) => {
+    const pubDate = new Date(readTag(item, "pubDate"));
+    return !Number.isNaN(pubDate.getTime()) && pubDate >= cutoff;
+  });
+
+  const targetItems = recentItems.length > 0 ? recentItems : items.slice(0, 1);
+  const lessons = await Promise.all(targetItems.map((item) => buildLessonFromItem(item, source)));
+
+  return lessons.sort((a, b) => b.date.localeCompare(a.date));
 }
 
 async function main() {
   const existing = JSON.parse(await fs.readFile(LESSONS_PATH, "utf8"));
-  const latestLessons = await Promise.all(SOURCE_ORDER.map((source) => fetchLesson(source)));
+  const latestLessons = (await Promise.all(SOURCE_ORDER.map((source) => fetchLesson(source)))).flat();
   const latestIds = new Set(latestLessons.map((lesson) => lesson.id));
   const merged = [...latestLessons, ...existing.filter((lesson) => !latestIds.has(lesson.id))];
   const nextJson = `${JSON.stringify(merged, null, 2)}\n`;

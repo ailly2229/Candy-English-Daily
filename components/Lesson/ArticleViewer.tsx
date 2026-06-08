@@ -34,7 +34,6 @@ export function ArticleViewer({
 }) {
   const [visible, setVisible] = useState(true);
   const [selectedHint, setSelectedHint] = useState<SelectedHint | null>(null);
-  const [savedWords, setSavedWords] = useState<Set<string>>(new Set());
   const transcriptLines = content.split(/\n+/).map((item) => item.trim()).filter(Boolean);
   const hints = useMemo(() => createTranscriptHints(vocabulary), [vocabulary]);
   const maxPhraseLength = useMemo(
@@ -49,18 +48,6 @@ export function ArticleViewer({
     utterance.lang = "en-US";
     utterance.rate = 0.82;
     window.speechSynthesis.speak(utterance);
-  }
-
-  function saveWord(hint: TranscriptWordHint) {
-    const key = "candy-english-words";
-    const current = JSON.parse(window.localStorage.getItem(key) ?? "[]") as TranscriptWordHint[];
-    const exists = current.some((item) => normalizeHintKey(item.word) === normalizeHintKey(hint.word));
-
-    if (!exists) {
-      window.localStorage.setItem(key, JSON.stringify([...current, hint]));
-    }
-
-    setSavedWords((items) => new Set(items).add(normalizeHintKey(hint.word)));
   }
 
   function openHint(event: MouseEvent<HTMLButtonElement>, hint: TranscriptWordHint) {
@@ -221,14 +208,7 @@ export function ArticleViewer({
           </p>
           <p className="mt-4 text-xl font-black text-slate-600">{selectedHint.hint.meaning}</p>
 
-          <div className="mt-5 grid grid-cols-[1fr_1fr_2fr] gap-3">
-            <button
-              className="grid min-h-16 place-items-center rounded-2xl bg-slate-100 text-sm font-black text-slate-500"
-              type="button"
-              onClick={() => saveWord(selectedHint.hint)}
-            >
-              {savedWords.has(normalizeHintKey(selectedHint.hint.word)) ? "已添加" : "添加到"}
-            </button>
+          <div className="mt-5 grid grid-cols-[1fr_2fr] gap-3">
             <a
               className="grid min-h-16 place-items-center rounded-2xl bg-slate-950 text-white"
               href={`https://dictionary.cambridge.org/dictionary/english/${encodeURIComponent(selectedHint.hint.word)}`}

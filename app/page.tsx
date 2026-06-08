@@ -1,12 +1,13 @@
 import { Footer } from "@/components/Layout/Footer";
 import { Navbar } from "@/components/Layout/Navbar";
+import { HistoryList } from "@/components/Home/HistoryList";
 import { Hero } from "@/components/Home/Hero";
 import { LessonSourceChooser } from "@/components/Home/LessonSourceChooser";
-import { StatsCard } from "@/components/Home/StatsCard";
-import { getDailyLessonsBySource } from "@/lib/lessons";
+import { getDailyLessonsBySource, getHistoryLessonsBySource } from "@/lib/lessons";
 
 export default function Home() {
   const lessons = getDailyLessonsBySource();
+  const historyLessons = getHistoryLessonsBySource();
 
   return (
     <>
@@ -14,7 +15,7 @@ export default function Home() {
       <main className="candy-shell">
         <Hero />
         <LessonSourceChooser lessons={lessons} />
-        <StatsCard />
+        <HistoryList lessons={historyLessons} />
       </main>
       <Footer />
     </>
