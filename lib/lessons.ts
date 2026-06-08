@@ -17,6 +17,8 @@ export type Lesson = {
   duration: number;
   audio: string;
   content: string;
+  transcript?: string;
+  pageUrl?: string;
   sentences: string[];
   vocabulary: VocabularyItem[];
 };
