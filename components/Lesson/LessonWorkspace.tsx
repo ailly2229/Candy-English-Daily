@@ -30,7 +30,11 @@ export function LessonWorkspace({ lesson }: { lesson: Lesson }) {
 
       <AudioPlayer src={lesson.audio} />
       <VocabularyGrid vocabulary={lesson.vocabulary} />
-      <ArticleViewer content={lesson.transcript ?? lesson.content} pageUrl={lesson.pageUrl} />
+      <ArticleViewer
+        content={lesson.transcript ?? lesson.content}
+        pageUrl={lesson.pageUrl}
+        vocabulary={lesson.vocabulary}
+      />
       <DictationTrainer lessonId={lesson.id} sentences={lesson.sentences} startedAt={startedAt} />
     </main>
   );
