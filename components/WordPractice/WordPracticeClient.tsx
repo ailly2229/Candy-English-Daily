@@ -13,9 +13,26 @@ function normalizeAnswer(value: string) {
 }
 
 function maskWord(word: string) {
-  return word
-    .split("")
-    .map((letter) => (letter === " " ? " " : "_"))
+  const letters = word.split("");
+  const revealableIndexes = letters
+    .map((letter, index) => (/[A-Za-z]/.test(letter) ? index : -1))
+    .filter((index) => index >= 0);
+
+  if (revealableIndexes.length <= 1) {
+    return letters.map((letter) => (/[A-Za-z]/.test(letter) ? "_" : letter)).join(" ");
+  }
+
+  const minVisible = Math.max(1, Math.floor(revealableIndexes.length * 0.3));
+  const maxVisible = Math.max(minVisible, Math.floor(revealableIndexes.length * 0.5));
+  const visibleCount = minVisible + Math.floor(Math.random() * (maxVisible - minVisible + 1));
+  const shuffledIndexes = [...revealableIndexes].sort(() => Math.random() - 0.5);
+  const visibleIndexes = new Set(shuffledIndexes.slice(0, visibleCount));
+
+  return letters
+    .map((letter, index) => {
+      if (!/[A-Za-z]/.test(letter)) return letter;
+      return visibleIndexes.has(index) ? letter : "_";
+    })
     .join(" ");
 }
 
@@ -44,9 +61,9 @@ export function WordPracticeClient({
   const nextTimer = useRef<number | null>(null);
   const currentWord = words[wordIndex];
 
-  const promptText = useMemo(() => {
+  const maskedWord = useMemo(() => {
     if (!currentWord) return "";
-    return [currentWord.meaning, currentWord.partOfSpeech, currentWord.definition].filter(Boolean).join(" · ");
+    return maskWord(currentWord.headword);
   }, [currentWord]);
 
   useEffect(() => {
@@ -138,16 +155,14 @@ export function WordPracticeClient({
             {currentWord.meaning ?? currentWord.definition ?? currentWord.headword}
           </p>
 
-          {promptText ? <p className="mt-4 text-base font-bold leading-7 text-slate-500">{promptText}</p> : null}
-
-          {currentWord.example ? (
-            <p className="mt-6 rounded-[22px] bg-[#FFF9F2] px-5 py-4 text-base font-bold leading-7 text-slate-700">
-              {currentWord.example}
+          {currentWord.definition ? (
+            <p className="mt-5 rounded-[22px] bg-[#FFF9F2] px-5 py-4 text-base font-bold leading-7 text-slate-600">
+              {currentWord.definition}
             </p>
           ) : null}
 
           <div className="mt-8 rounded-[24px] bg-slate-950 px-5 py-5 font-serif text-4xl font-black tracking-normal text-white sm:text-6xl">
-            {maskWord(currentWord.headword)}
+            {maskedWord}
           </div>
 
           <input
