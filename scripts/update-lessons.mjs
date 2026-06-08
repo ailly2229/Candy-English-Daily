@@ -17,7 +17,7 @@ const SOURCES = {
 
 const SOURCE_ORDER = ["easy", "standard"];
 const DRY_RUN = process.argv.includes("--dry-run");
-const HISTORY_MONTHS = 2;
+const HISTORY_MONTHS = 6;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, "..");
 const LESSONS_PATH = path.join(ROOT_DIR, "data", "lessons.json");
@@ -209,6 +209,24 @@ function extractVocabulary(html, transcript) {
   return fillVocabularyFromTranscript(items, transcript);
 }
 
+function extractWorksheet(html) {
+  const worksheetLink =
+    html.match(/href="([^"]+worksheet[^"]+\.pdf)"/i)?.[1] ??
+    html.match(/href="([^"]+_worksheet_?\.pdf)"/i)?.[1];
+
+  if (!worksheetLink) return "";
+
+  if (worksheetLink.startsWith("//")) {
+    return `https:${worksheetLink}`;
+  }
+
+  if (worksheetLink.startsWith("/")) {
+    return `https://www.bbc.co.uk${worksheetLink}`;
+  }
+
+  return worksheetLink.replace(/^http:\/\//, "https://");
+}
+
 function fillVocabularyFromTranscript(items, transcript) {
   const existing = new Set(items.map((item) => item.word.toLowerCase()));
   const lowerTranscript = transcript.toLowerCase();
@@ -263,6 +281,7 @@ async function fetchPageData(pageUrl) {
   return {
     transcript,
     vocabulary: extractVocabulary(html, transcript),
+    worksheet: extractWorksheet(html),
     pageUrl
   };
 }
@@ -296,6 +315,7 @@ async function buildLessonFromItem(item, source) {
     content,
     transcript,
     pageUrl,
+    worksheet: pageData.worksheet || undefined,
     sentences: extractSentences(transcript),
     vocabulary: pageData.vocabulary
   };

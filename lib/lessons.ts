@@ -19,6 +19,7 @@ export type Lesson = {
   content: string;
   transcript?: string;
   pageUrl?: string;
+  worksheet?: string;
   sentences: string[];
   vocabulary: VocabularyItem[];
 };
@@ -46,13 +47,13 @@ export function getDailyLessonsBySource(): Record<LessonSource, Lesson> {
 }
 
 export function getHistoryLessonsBySource(): Record<LessonSource, Lesson[]> {
-  const twoMonthsAgo = new Date();
-  twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+  const sixMonthsAgo = new Date();
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
   return SOURCE_ORDER.reduce(
     (items, source) => {
       const lessons = getLessonsBySource(source)
-        .filter((lesson) => new Date(`${lesson.date}T00:00:00`) >= twoMonthsAgo)
+        .filter((lesson) => new Date(`${lesson.date}T00:00:00`) >= sixMonthsAgo)
         .sort((a, b) => b.date.localeCompare(a.date));
 
       return {

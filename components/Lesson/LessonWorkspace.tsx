@@ -6,6 +6,7 @@ import { ArticleViewer } from "@/components/Lesson/ArticleViewer";
 import { AudioPlayer } from "@/components/Lesson/AudioPlayer";
 import { DictationTrainer } from "@/components/Lesson/DictationTrainer";
 import { VocabularyGrid } from "@/components/Lesson/VocabularyGrid";
+import { WorksheetCard } from "@/components/Lesson/WorksheetCard";
 import { CandyLink } from "@/components/UI/CandyLink";
 import type { Lesson } from "@/lib/lessons";
 import { formatLessonDate } from "@/lib/format";
@@ -36,6 +37,7 @@ export function LessonWorkspace({ lesson }: { lesson: Lesson }) {
         vocabulary={lesson.vocabulary}
       />
       <DictationTrainer lessonId={lesson.id} sentences={lesson.sentences} startedAt={startedAt} />
+      <WorksheetCard worksheet={lesson.worksheet} />
     </main>
   );
 }
