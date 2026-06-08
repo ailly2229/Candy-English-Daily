@@ -2,7 +2,7 @@
 
 A candy-colored personal English learning web app for daily BBC Learning English practice, with both easy and standard sources.
 
-## candy-english-daily.vercel.app
+## [点击访问Candy English](https://candy-english-daily.vercel.app)
 
 ## Features
 
