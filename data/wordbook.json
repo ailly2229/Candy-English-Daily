@@ -1,0 +1,122 @@
+[
+  {
+    "word": "journey",
+    "level": "A2",
+    "phonetic": "/ˈdʒɜːni/",
+    "partOfSpeech": "noun",
+    "definition": "an act of travelling from one place to another",
+    "meaning": "旅行；旅程",
+    "example": "The train journey takes about two hours.",
+    "exampleZh": "这趟火车旅程大约需要两个小时。"
+  },
+  {
+    "word": "healthy",
+    "level": "A2",
+    "phonetic": "/ˈhelθi/",
+    "partOfSpeech": "adjective",
+    "definition": "good for your body or mind",
+    "meaning": "健康的；有益健康的",
+    "example": "Fruit is a healthy snack.",
+    "exampleZh": "水果是一种健康零食。"
+  },
+  {
+    "word": "improve",
+    "level": "A2",
+    "phonetic": "/ɪmˈpruːv/",
+    "partOfSpeech": "verb",
+    "definition": "to become better, or to make something better",
+    "meaning": "改善；提高",
+    "example": "Listening every day can improve your English.",
+    "exampleZh": "每天听力练习可以提高你的英语。"
+  },
+  {
+    "word": "confident",
+    "level": "B1",
+    "phonetic": "/ˈkɒnfɪdənt/",
+    "partOfSpeech": "adjective",
+    "definition": "feeling sure about your own ability",
+    "meaning": "自信的；有把握的",
+    "example": "She feels more confident when she speaks English.",
+    "exampleZh": "她说英语时感觉更自信。"
+  },
+  {
+    "word": "communicate",
+    "level": "B1",
+    "phonetic": "/kəˈmjuːnɪkeɪt/",
+    "partOfSpeech": "verb",
+    "definition": "to share information, ideas or feelings with someone",
+    "meaning": "交流；沟通",
+    "example": "People communicate in many different ways.",
+    "exampleZh": "人们用许多不同方式交流。"
+  },
+  {
+    "word": "environment",
+    "level": "B1",
+    "phonetic": "/ɪnˈvaɪrənmənt/",
+    "partOfSpeech": "noun",
+    "definition": "the natural world in which people, animals and plants live",
+    "meaning": "环境；自然环境",
+    "example": "We should protect the environment.",
+    "exampleZh": "我们应该保护环境。"
+  },
+  {
+    "word": "federal",
+    "level": "B2",
+    "phonetic": "/ˈfedərəl/",
+    "partOfSpeech": "adjective",
+    "definition": "relating to a system where states have their own governments but are united under a central government",
+    "meaning": "联邦制的；联邦政府的",
+    "example": "The federal government makes laws that apply to all states.",
+    "exampleZh": "联邦政府制定适用于所有州的法律。"
+  },
+  {
+    "word": "complex",
+    "level": "B2",
+    "phonetic": "/ˈkɒmpleks/",
+    "partOfSpeech": "adjective",
+    "definition": "involving many different but connected parts",
+    "meaning": "复杂的",
+    "example": "Climate change is a complex problem.",
+    "exampleZh": "气候变化是一个复杂的问题。"
+  },
+  {
+    "word": "significant",
+    "level": "B2",
+    "phonetic": "/sɪɡˈnɪfɪkənt/",
+    "partOfSpeech": "adjective",
+    "definition": "large or important enough to have an effect",
+    "meaning": "重要的；显著的",
+    "example": "Small habits can make a significant difference.",
+    "exampleZh": "小习惯也能带来显著改变。"
+  },
+  {
+    "word": "resilience",
+    "level": "C1",
+    "phonetic": "/rɪˈzɪliəns/",
+    "partOfSpeech": "noun",
+    "definition": "the ability to become strong again after something difficult",
+    "meaning": "韧性；复原力",
+    "example": "Learning a language builds patience and resilience.",
+    "exampleZh": "学习一门语言会培养耐心和韧性。"
+  },
+  {
+    "word": "interpretation",
+    "level": "C1",
+    "phonetic": "/ɪnˌtɜːprəˈteɪʃn/",
+    "partOfSpeech": "noun",
+    "definition": "the particular way in which something is understood",
+    "meaning": "理解；解释",
+    "example": "Every reader may have a different interpretation of the poem.",
+    "exampleZh": "每位读者对这首诗都可能有不同的理解。"
+  },
+  {
+    "word": "sustainable",
+    "level": "C1",
+    "phonetic": "/səˈsteɪnəbl/",
+    "partOfSpeech": "adjective",
+    "definition": "able to continue for a long time without causing damage",
+    "meaning": "可持续的",
+    "example": "Many cities are looking for sustainable ways to grow.",
+    "exampleZh": "许多城市都在寻找可持续的发展方式。"
+  }
+]
