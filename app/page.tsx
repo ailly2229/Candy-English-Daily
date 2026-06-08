@@ -5,12 +5,12 @@ import { Hero } from "@/components/Home/Hero";
 import { LessonSourceChooser } from "@/components/Home/LessonSourceChooser";
 import { WordbookTrainer } from "@/components/Home/WordbookTrainer";
 import { getDailyLessonsBySource, getHistoryLessonsBySource } from "@/lib/lessons";
-import { getWordbook } from "@/lib/wordbook";
+import { getWordbookSummaries } from "@/lib/wordbook";
 
 export default function Home() {
   const lessons = getDailyLessonsBySource();
   const historyLessons = getHistoryLessonsBySource();
-  const words = getWordbook();
+  const wordbookLevels = getWordbookSummaries();
 
   return (
     <>
@@ -18,7 +18,7 @@ export default function Home() {
       <main className="candy-shell">
         <Hero />
         <LessonSourceChooser lessons={lessons} />
-        <WordbookTrainer words={words} />
+        <WordbookTrainer levels={wordbookLevels} />
         <HistoryList lessons={historyLessons} />
       </main>
       <Footer />

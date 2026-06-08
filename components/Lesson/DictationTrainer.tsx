@@ -7,6 +7,7 @@ import { CandyCard } from "@/components/UI/CandyCard";
 import { useProgress } from "@/context/ProgressContext";
 import { scoreDictation } from "@/lib/dictation";
 import { ResultCard } from "@/components/Lesson/ResultCard";
+import { speakBritishMale } from "@/lib/speech";
 
 export function DictationTrainer({
   lessonId,
@@ -50,12 +51,7 @@ export function DictationTrainer({
   }
 
   function playSentence() {
-    if (!("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(currentSentence);
-    utterance.lang = "en-US";
-    utterance.rate = 0.88;
-    window.speechSynthesis.speak(utterance);
+    speakBritishMale(currentSentence, { rate: 0.88 });
   }
 
   return (

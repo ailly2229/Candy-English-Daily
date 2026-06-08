@@ -5,6 +5,7 @@ import { ExternalLink, FileText, Search, Volume2 } from "lucide-react";
 import { CandyButton } from "@/components/UI/CandyButton";
 import { CandyCard } from "@/components/UI/CandyCard";
 import type { VocabularyItem } from "@/lib/lessons";
+import { speakBritishMale } from "@/lib/speech";
 import { createTranscriptHints, normalizeHintKey, type TranscriptWordHint } from "@/lib/wordHints";
 
 type SelectedHint = {
@@ -42,12 +43,7 @@ export function ArticleViewer({
   );
 
   function speak(word: string) {
-    if (!("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(word);
-    utterance.lang = "en-US";
-    utterance.rate = 0.82;
-    window.speechSynthesis.speak(utterance);
+    speakBritishMale(word, { rate: 0.82 });
   }
 
   function openHint(event: MouseEvent<HTMLButtonElement>, hint: TranscriptWordHint) {
