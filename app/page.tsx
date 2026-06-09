@@ -7,14 +7,14 @@ import { PocketEnglish } from "@/components/Home/PocketEnglish";
 import { WordPracticeChooser } from "@/components/Home/WordPracticeChooser";
 import { WordbookTrainer } from "@/components/Home/WordbookTrainer";
 import { getDailyLessonsBySource, getHistoryLessonsBySource } from "@/lib/lessons";
-import { getPocketEnglishItems } from "@/lib/pocketEnglish";
+import { getRecentPocketEnglishItems } from "@/lib/pocketEnglish";
 import { getWordbookSummaries } from "@/lib/wordbook";
 
 export default function Home() {
   const lessons = getDailyLessonsBySource();
   const historyLessons = getHistoryLessonsBySource();
   const wordbookLevels = getWordbookSummaries();
-  const pocketEnglish = getPocketEnglishItems();
+  const pocketEnglish = getRecentPocketEnglishItems();
 
   return (
     <>

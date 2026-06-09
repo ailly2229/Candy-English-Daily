@@ -374,6 +374,106 @@ function parsePocketDateFromUrl(url) {
   return `20${year}-${month}-${day}`;
 }
 
+function extractPocketAudio(html) {
+  const audio =
+    html.match(/href="([^"]+\.mp3)"/i)?.[1] ??
+    html.match(/https?:\/\/downloads\.bbc\.co\.uk\/learningenglish\/[^"']+\.mp3/i)?.[0] ??
+    "";
+
+  return audio ? normalizeBbcUrl(audio) : "";
+}
+
+function extractPocketRichText(html) {
+  const richTextStart = html.match(/<div class="widget widget-richtext[^"]*"[^>]*>\s*<div class="text"[^>]*>/i);
+  if (!richTextStart || richTextStart.index === undefined) return "";
+
+  const start = richTextStart.index + richTextStart[0].length;
+  const rest = html.slice(start);
+  const stop = rest.search(/<h3[^>]*>\s*测验与练习\s*<\/h3>/i);
+  return stop >= 0 ? rest.slice(0, stop) : rest;
+}
+
+function extractPocketTranscript(html) {
+  return stripTagsToLines(extractPocketRichText(html))
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function splitPocketVocabularyLine(line) {
+  const cleanLine = line.replace(/\s+/g, " ").trim();
+  const firstMeaningIndex = [...cleanLine].findIndex((char) => /[\u3400-\u9FFF（]/.test(char));
+
+  if (firstMeaningIndex <= 0) return null;
+
+  const word = cleanLine.slice(0, firstMeaningIndex).trim();
+  const meaning = cleanLine.slice(firstMeaningIndex).trim();
+
+  if (!word || !meaning) return null;
+
+  return { word, meaning };
+}
+
+function extractPocketVocabulary(html, transcript) {
+  const vocabularySection = extractSection(
+    html,
+    /<h3[^>]*>\s*词汇表\s*<\/h3>/i,
+    /<h3[^>]*>\s*答案\s*<\/h3>|<div class="widget widget-list\b/i
+  );
+  const lines = stripTagsToLines(vocabularySection)
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+  const items = [];
+  const seen = new Set();
+
+  for (const line of lines) {
+    const item = splitPocketVocabularyLine(line);
+    if (!item) continue;
+
+    const key = item.word.toLowerCase();
+    if (seen.has(key)) continue;
+
+    seen.add(key);
+    items.push({
+      word: item.word,
+      meaning: item.meaning,
+      phonetic: "",
+      example: buildExample(item.word, transcript)
+    });
+  }
+
+  return items;
+}
+
+async function fetchPocketDetails(item) {
+  const response = await fetch(item.url, {
+    headers: {
+      "user-agent": "Candy English Daily/0.1"
+    }
+  });
+
+  if (!response.ok) {
+    return {
+      ...item,
+      slug: `pocket-${slugify(item.title)}`,
+      audio: "",
+      transcript: item.summary,
+      vocabulary: []
+    };
+  }
+
+  const html = await response.text();
+  const transcript = extractPocketTranscript(html) || item.summary;
+
+  return {
+    ...item,
+    slug: `pocket-${slugify(item.title)}`,
+    audio: extractPocketAudio(html),
+    transcript,
+    vocabulary: extractPocketVocabulary(html, transcript)
+  };
+}
+
 function extractPocketEnglishItems(html) {
   const items = [];
   const seen = new Set();
@@ -381,7 +481,7 @@ function extractPocketEnglishItems(html) {
     /<a[^>]+href="([^"]*\/learningenglish\/chinese\/features\/take-away-english\/ep-\d+)"[^>]*>([\s\S]*?)<\/a>/gi;
   let match;
 
-  while ((match = linkPattern.exec(html)) && items.length < 12) {
+  while ((match = linkPattern.exec(html))) {
     const url = normalizeBbcUrl(match[1]);
     if (seen.has(url)) continue;
 
@@ -422,7 +522,16 @@ async function fetchPocketEnglish() {
     throw new Error(`Pocket English request failed with ${response.status}.`);
   }
 
-  return extractPocketEnglishItems(await response.text());
+  const cutoff = new Date();
+  cutoff.setMonth(cutoff.getMonth() - HISTORY_MONTHS);
+
+  const items = extractPocketEnglishItems(await response.text()).filter((item) => {
+    const date = new Date(`${item.date}T00:00:00`);
+    return !Number.isNaN(date.getTime()) && date >= cutoff;
+  });
+
+  const details = await Promise.all(items.map((item) => fetchPocketDetails(item)));
+  return details.sort((a, b) => b.date.localeCompare(a.date));
 }
 
 async function main() {

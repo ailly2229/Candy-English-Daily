@@ -27,8 +27,8 @@ const candyStyles = [
   }
 ];
 
-export function VocabularyGrid({ vocabulary }: { vocabulary: VocabularyItem[] }) {
-  const visibleVocabulary = vocabulary.slice(0, 8);
+export function VocabularyGrid({ vocabulary, showAll = false }: { vocabulary: VocabularyItem[]; showAll?: boolean }) {
+  const visibleVocabulary = showAll ? vocabulary : vocabulary.slice(0, 8);
 
   return (
     <section className="py-8">
