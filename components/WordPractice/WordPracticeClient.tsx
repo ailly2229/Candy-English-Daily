@@ -136,7 +136,7 @@ export function WordPracticeClient({
   }
 
   return (
-    <section className="candy-shell py-8">
+    <section className="candy-shell min-h-[calc(100dvh-64px)] pb-[calc(6rem+env(safe-area-inset-bottom))] pt-5 sm:py-8">
       <CandyCard className="overflow-hidden bg-[#F8FBEE] p-5 sm:p-8">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
@@ -182,7 +182,7 @@ export function WordPracticeClient({
           ) : null}
 
           <button
-            className={`mt-8 w-full rounded-[24px] bg-slate-950 px-4 py-5 text-left shadow-inner outline-none transition focus:ring-4 focus:ring-[#FF7EB6]/20 ${
+            className={`mt-8 w-full scroll-mt-24 rounded-[24px] bg-slate-950 px-3 py-5 text-left shadow-inner outline-none transition focus:ring-4 focus:ring-[#FF7EB6]/20 sm:px-4 ${
               checkState === "correct"
                 ? "ring-4 ring-[#7AE582]/30"
                 : checkState === "wrong"
@@ -238,7 +238,7 @@ export function WordPracticeClient({
 
           <input
             ref={inputRef}
-            className="sr-only"
+            className="fixed bottom-[env(safe-area-inset-bottom)] left-1/2 h-12 w-12 -translate-x-1/2 opacity-0"
             aria-label="输入英文单词，按空格确认"
             value={answer}
             autoFocus
@@ -273,7 +273,7 @@ export function WordPracticeClient({
             </div>
           ) : null}
 
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <div className="sticky bottom-[calc(env(safe-area-inset-bottom)+12px)] z-10 mt-6 flex flex-wrap justify-center gap-3 rounded-full bg-white/82 px-3 py-2 shadow-[0_14px_40px_rgba(31,41,55,0.12)] backdrop-blur sm:static sm:bg-transparent sm:p-0 sm:shadow-none sm:backdrop-blur-0">
             <CandyButton onClick={checkAnswer} disabled={!answer.trim() || checkState === "correct"}>
               确认
             </CandyButton>

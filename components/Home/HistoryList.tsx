@@ -18,7 +18,7 @@ export function HistoryList({ lessons }: { lessons: Record<LessonSource, Lesson[
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-sm font-black text-[#6EC6FF]">History</p>
-          <h2 className="mt-1 text-2xl font-black text-slate-950">历史课程</h2>
+          <h2 className="mt-1 text-2xl font-black text-slate-950">6Min英语课程</h2>
         </div>
 
         <div className="grid grid-cols-2 gap-2 rounded-full border border-slate-100 bg-white p-1 shadow-sm">

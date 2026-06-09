@@ -31,7 +31,7 @@ function notifyAuthChange() {
 export function LoginButton() {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [selectedUser, setSelectedUser] = useState<AuthUser>("Ally");
+  const [accountName, setAccountName] = useState<AuthUser | string>("Ally");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
@@ -52,14 +52,19 @@ export function LoginButton() {
   }, []);
 
   function login() {
+    if (!isAuthUser(accountName)) {
+      setError("请选择或填写有效账号");
+      return;
+    }
+
     if (password !== AUTH_PASSWORD) {
       setError("密码不正确");
       return;
     }
 
-    window.localStorage.setItem(AUTH_STORAGE_KEY, selectedUser);
-    document.cookie = `${AUTH_COOKIE_KEY}=${selectedUser}; path=/; max-age=31536000; SameSite=Lax`;
-    setUser(selectedUser);
+    window.localStorage.setItem(AUTH_STORAGE_KEY, accountName);
+    document.cookie = `${AUTH_COOKIE_KEY}=${accountName}; path=/; max-age=31536000; SameSite=Lax`;
+    setUser(accountName);
     setPassword("");
     setError("");
     setOpen(false);
@@ -105,23 +110,24 @@ export function LoginButton() {
               </button>
             </div>
 
-            <div className="mt-5 grid grid-cols-2 gap-2">
-              {AUTH_USERS.map((item) => (
-                <button
-                  key={item}
-                  className={`min-h-11 rounded-full px-4 text-sm font-black transition ${
-                    selectedUser === item ? "bg-[#ECFFF0] text-[#157A33]" : "bg-slate-50 text-slate-500"
-                  }`}
-                  type="button"
-                  onClick={() => {
-                    setSelectedUser(item);
-                    setError("");
-                  }}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
+            <label className="mt-5 block">
+              <span className="text-sm font-black text-slate-400">账号</span>
+              <input
+                className="mt-2 min-h-12 w-full rounded-full border border-slate-200 px-5 text-base font-bold outline-none transition focus:border-[#FF7EB6] focus:ring-4 focus:ring-[#FF7EB6]/15"
+                list="candy-login-users"
+                placeholder="选择或填写账号"
+                value={accountName}
+                onChange={(event) => {
+                  setAccountName(event.target.value);
+                  setError("");
+                }}
+              />
+              <datalist id="candy-login-users">
+                {AUTH_USERS.map((item) => (
+                  <option key={item} value={item} />
+                ))}
+              </datalist>
+            </label>
 
             <input
               className="mt-5 min-h-12 w-full rounded-full border border-slate-200 px-5 text-base font-bold outline-none transition focus:border-[#FF7EB6] focus:ring-4 focus:ring-[#FF7EB6]/15"

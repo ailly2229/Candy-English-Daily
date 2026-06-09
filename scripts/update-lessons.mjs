@@ -21,6 +21,8 @@ const HISTORY_MONTHS = 6;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, "..");
 const LESSONS_PATH = path.join(ROOT_DIR, "data", "lessons.json");
+const POCKET_ENGLISH_PATH = path.join(ROOT_DIR, "data", "pocket-english.json");
+const POCKET_ENGLISH_URL = "https://www.bbc.co.uk/learningenglish/chinese/features/take-away-english";
 
 const VOCAB_TRANSLATIONS = {
   "old friend": "老朋友",
@@ -102,6 +104,17 @@ function slugify(value) {
 
 function idFromDate(source, date) {
   return `${source}-${date.toISOString().slice(0, 10).replaceAll("-", "")}`;
+}
+
+function idFromPocketUrl(url) {
+  const episode = url.match(/ep-(\d+)/i)?.[1] ?? slugify(url);
+  return `pocket-${episode}`;
+}
+
+function normalizeBbcUrl(url) {
+  if (url.startsWith("//")) return `https:${url}`;
+  if (url.startsWith("/")) return `https://www.bbc.co.uk${url}`;
+  return url.replace(/^http:\/\//, "https://");
 }
 
 function extractAudio(itemXml) {
@@ -348,30 +361,103 @@ async function fetchLesson(source) {
   return lessons.sort((a, b) => b.date.localeCompare(a.date));
 }
 
+function parsePocketDate(value) {
+  const date = new Date(`${value} UTC`);
+  return Number.isNaN(date.getTime()) ? "" : date.toISOString().slice(0, 10);
+}
+
+function parsePocketDateFromUrl(url) {
+  const episodeDate = url.match(/ep-(\d{2})(\d{2})(\d{2})/i);
+  if (!episodeDate) return "";
+
+  const [, year, month, day] = episodeDate;
+  return `20${year}-${month}-${day}`;
+}
+
+function extractPocketEnglishItems(html) {
+  const items = [];
+  const seen = new Set();
+  const linkPattern =
+    /<a[^>]+href="([^"]*\/learningenglish\/chinese\/features\/take-away-english\/ep-\d+)"[^>]*>([\s\S]*?)<\/a>/gi;
+  let match;
+
+  while ((match = linkPattern.exec(html)) && items.length < 12) {
+    const url = normalizeBbcUrl(match[1]);
+    if (seen.has(url)) continue;
+
+    const title = stripTagsToLines(match[2]).replace(/\s+/g, " ").trim();
+    if (!title || title.length < 6) continue;
+
+    const after = stripTagsToLines(html.slice(match.index, match.index + 1600))
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
+    const episodeLine = after.find((line) => /^Episode\s+\d+\s+\//i.test(line));
+    const dateText = episodeLine?.match(/\/\s*(.+)$/)?.[1]?.trim() ?? "";
+    const summary =
+      after.find((line) => line !== title && !/^Episode\s+\d+\s+\//i.test(line) && line !== "已完成") ?? "";
+    const date = parsePocketDate(dateText) || parsePocketDateFromUrl(url);
+
+    seen.add(url);
+    items.push({
+      id: idFromPocketUrl(url),
+      title,
+      date,
+      summary,
+      url
+    });
+  }
+
+  return items;
+}
+
+async function fetchPocketEnglish() {
+  const response = await fetch(POCKET_ENGLISH_URL, {
+    headers: {
+      "user-agent": "Candy English Daily/0.1"
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Pocket English request failed with ${response.status}.`);
+  }
+
+  return extractPocketEnglishItems(await response.text());
+}
+
 async function main() {
   const existing = JSON.parse(await fs.readFile(LESSONS_PATH, "utf8"));
   const latestLessons = (await Promise.all(SOURCE_ORDER.map((source) => fetchLesson(source)))).flat();
+  const pocketEnglish = await fetchPocketEnglish();
   const latestIds = new Set(latestLessons.map((lesson) => lesson.id));
   const merged = [...latestLessons, ...existing.filter((lesson) => !latestIds.has(lesson.id))];
   const nextJson = `${JSON.stringify(merged, null, 2)}\n`;
   const currentJson = await fs.readFile(LESSONS_PATH, "utf8");
+  const nextPocketJson = `${JSON.stringify(pocketEnglish, null, 2)}\n`;
+  const currentPocketJson = await fs.readFile(POCKET_ENGLISH_PATH, "utf8").catch(() => "");
 
   for (const lesson of latestLessons) {
     console.log(`${lesson.source}: ${lesson.date} - ${lesson.title}`);
   }
 
-  if (nextJson === currentJson) {
+  for (const item of pocketEnglish.slice(0, 5)) {
+    console.log(`pocket: ${item.date} - ${item.title}`);
+  }
+
+  if (nextJson === currentJson && nextPocketJson === currentPocketJson) {
     console.log("No lesson changes found.");
     return;
   }
 
   if (DRY_RUN) {
-    console.log("Dry run only. data/lessons.json was not changed.");
+    console.log("Dry run only. data/lessons.json and data/pocket-english.json were not changed.");
     return;
   }
 
   await fs.writeFile(LESSONS_PATH, nextJson, "utf8");
+  await fs.writeFile(POCKET_ENGLISH_PATH, nextPocketJson, "utf8");
   console.log("Updated data/lessons.json.");
+  console.log("Updated data/pocket-english.json.");
 }
 
 main().catch((error) => {
