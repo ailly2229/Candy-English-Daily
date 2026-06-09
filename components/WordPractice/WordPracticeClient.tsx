@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CheckCircle2, RotateCcw, XCircle } from "lucide-react";
+import { CheckCircle2, Delete, RotateCcw, XCircle } from "lucide-react";
 import { CandyButton } from "@/components/UI/CandyButton";
 import { CandyCard } from "@/components/UI/CandyCard";
 import type { WordbookHeadword, WordbookLevel } from "@/lib/wordbook";
@@ -15,6 +15,21 @@ const answerColors = [
   "text-[#FFC971]",
   "text-[#BFA2FF]",
   "text-[#FF9D6E]"
+];
+
+const keyboardRows = [
+  ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+  ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+  ["z", "x", "c", "v", "b", "n", "m"]
+];
+
+const keyboardStyles = [
+  "bg-[#FFE3F1] text-[#B52B70]",
+  "bg-[#DFF5FF] text-[#1779AE]",
+  "bg-[#E8FFE9] text-[#218C3C]",
+  "bg-[#FFF3D9] text-[#A66000]",
+  "bg-[#F2ECFF] text-[#6F50C7]",
+  "bg-[#FFE4EF] text-[#B52B70]"
 ];
 
 function normalizeAnswer(value: string) {
@@ -61,7 +76,6 @@ export function WordPracticeClient({
   const [checkState, setCheckState] = useState<CheckState>("idle");
   const [correctCount, setCorrectCount] = useState(0);
   const nextTimer = useRef<number | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
   const currentWord = words[wordIndex];
 
   const visibleIndexes = useMemo(() => {
@@ -86,6 +100,33 @@ export function WordPracticeClient({
       }
     };
   }, []);
+
+  useEffect(() => {
+    function handlePhysicalKeyboard(event: KeyboardEvent) {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("input, textarea, select")) return;
+
+      if (event.key === " " || event.key === "Enter") {
+        event.preventDefault();
+        checkAnswer();
+        return;
+      }
+
+      if (event.key === "Backspace" || event.key === "Delete") {
+        event.preventDefault();
+        deleteLastLetter();
+        return;
+      }
+
+      if (/^[A-Za-z]$/.test(event.key)) {
+        event.preventDefault();
+        appendLetter(event.key.toLowerCase());
+      }
+    }
+
+    window.addEventListener("keydown", handlePhysicalKeyboard);
+    return () => window.removeEventListener("keydown", handlePhysicalKeyboard);
+  });
 
   function goNext() {
     if (nextTimer.current) {
@@ -124,6 +165,17 @@ export function WordPracticeClient({
     setCheckState("idle");
   }
 
+  function appendLetter(letter: string) {
+    if (!currentWord || checkState === "correct") return;
+    updateAnswer(`${answer}${letter}`);
+  }
+
+  function deleteLastLetter() {
+    if (checkState === "correct") return;
+    setAnswer((current) => current.slice(0, -1));
+    setCheckState("idle");
+  }
+
   if (words.length === 0) {
     return (
       <section className="candy-shell py-8">
@@ -136,7 +188,7 @@ export function WordPracticeClient({
   }
 
   return (
-    <section className="candy-shell min-h-[calc(100dvh-64px)] pb-[calc(6rem+env(safe-area-inset-bottom))] pt-5 sm:py-8">
+    <section className="candy-shell min-h-[calc(100dvh-64px)] pb-[calc(1rem+env(safe-area-inset-bottom))] pt-5 sm:py-8">
       <CandyCard className="overflow-hidden bg-[#F8FBEE] p-5 sm:p-8">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
@@ -190,7 +242,7 @@ export function WordPracticeClient({
                   : ""
             }`}
             type="button"
-            onClick={() => inputRef.current?.focus()}
+            aria-label="单词填写区"
           >
             <span className="flex flex-wrap justify-center gap-2 font-serif text-4xl font-black tracking-normal sm:gap-3 sm:text-6xl">
               {currentWord.headword.split("").map((letter, index) => {
@@ -236,32 +288,6 @@ export function WordPracticeClient({
             </span>
           </button>
 
-          <input
-            ref={inputRef}
-            className="fixed bottom-[env(safe-area-inset-bottom)] left-1/2 h-12 w-12 -translate-x-1/2 opacity-0"
-            aria-label="输入英文单词，按空格确认"
-            value={answer}
-            autoFocus
-            onChange={(event) => {
-              updateAnswer(event.target.value);
-            }}
-            onKeyDown={(event) => {
-              if (event.key === " ") {
-                event.preventDefault();
-                checkAnswer();
-                return;
-              }
-
-              if (event.key === "Backspace") {
-                event.preventDefault();
-                if (checkState !== "correct") {
-                  setAnswer((current) => current.slice(0, -1));
-                  setCheckState("idle");
-                }
-              }
-            }}
-          />
-
           {checkState !== "idle" ? (
             <div
               className={`mx-auto mt-5 inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-black ${
@@ -273,14 +299,39 @@ export function WordPracticeClient({
             </div>
           ) : null}
 
-          <div className="sticky bottom-[calc(env(safe-area-inset-bottom)+12px)] z-10 mt-6 flex flex-wrap justify-center gap-3 rounded-full bg-white/82 px-3 py-2 shadow-[0_14px_40px_rgba(31,41,55,0.12)] backdrop-blur sm:static sm:bg-transparent sm:p-0 sm:shadow-none sm:backdrop-blur-0">
-            <CandyButton onClick={checkAnswer} disabled={!answer.trim() || checkState === "correct"}>
-              确认
-            </CandyButton>
-            <CandyButton tone="plain" onClick={goNext}>
-              <RotateCcw size={18} />
-              换一个
-            </CandyButton>
+          <div className="sticky bottom-[calc(env(safe-area-inset-bottom)+10px)] z-10 mt-6 rounded-[28px] bg-white/90 p-3 shadow-[0_16px_50px_rgba(31,41,55,0.16)] backdrop-blur sm:static sm:bg-transparent sm:p-0 sm:shadow-none sm:backdrop-blur-0">
+            <div className="mx-auto max-w-2xl space-y-2">
+              {keyboardRows.map((row, rowIndex) => (
+                <div key={row.join("")} className="flex justify-center gap-1.5 sm:gap-2">
+                  {row.map((letter, index) => (
+                    <button
+                      key={letter}
+                      className={`grid h-10 min-w-8 flex-1 place-items-center rounded-[14px] text-base font-black uppercase shadow-sm transition active:scale-95 sm:h-12 sm:min-w-11 sm:text-lg ${
+                        keyboardStyles[(index + rowIndex * 2) % keyboardStyles.length]
+                      }`}
+                      type="button"
+                      onClick={() => appendLetter(letter)}
+                    >
+                      {letter}
+                    </button>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-3 flex flex-wrap justify-center gap-3">
+              <CandyButton tone="plain" onClick={deleteLastLetter} disabled={!answer || checkState === "correct"}>
+                <Delete size={18} />
+                删除
+              </CandyButton>
+              <CandyButton onClick={checkAnswer} disabled={!answer.trim() || checkState === "correct"}>
+                确认
+              </CandyButton>
+              <CandyButton tone="plain" onClick={goNext}>
+                <RotateCcw size={18} />
+                换一个
+              </CandyButton>
+            </div>
           </div>
         </div>
       </CandyCard>
