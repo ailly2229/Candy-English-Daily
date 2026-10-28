@@ -1172,6 +1172,42 @@
     ],
     "vocabulary": [
       {
+        "word": "sober",
+        "meaning": "not drinking alcohol or taking recreational drugs",
+        "phonetic": "",
+        "example": "So, why are more young people choosing to be sober?"
+      },
+      {
+        "word": "societal pressure",
+        "meaning": "feeling that you should do something because lots of other people expect you to",
+        "phonetic": "",
+        "example": "So, today I don't drink at all, but when I was in my early 20s, I think I felt maybe a bit of, like, societal pressure - you know, work drinks or being at uni, where it was the nor"
+      },
+      {
+        "word": "the norm",
+        "meaning": "the usual or common thing to do",
+        "phonetic": "",
+        "example": "So, today I don't drink at all, but when I was in my early 20s, I think I felt maybe a bit of, like, societal pressure - you know, work drinks or being at uni, where it was the nor"
+      },
+      {
+        "word": "self-optimisation content",
+        "meaning": "videos, posts and other media about being fit, healthy and achieving big goals",
+        "phonetic": "",
+        "example": "Here's Millie talking more about this to BBC World Service podcast What in the World: Millie I think we had this, like, rise of self-optimisation content."
+      },
+      {
+        "word": "tout",
+        "meaning": "praise something or talk about it a lot to get others to try it",
+        "phonetic": "",
+        "example": "BBC presenters use \"tout\" in this episode."
+      },
+      {
+        "word": "pushback",
+        "meaning": "strong criticism of a trend; people doing the opposite of a trend",
+        "phonetic": "",
+        "example": "And so, I think now we are entering this, like, almost pushback era of that content and you're seeing celebrities..."
+      },
+      {
         "word": "common",
         "meaning": "常见的",
         "phonetic": "",
@@ -1182,12 +1218,6 @@
         "meaning": "不寻常的",
         "phonetic": "",
         "example": "Do you want to hear something quite unusual for me?"
-      },
-      {
-        "word": "worksheet",
-        "meaning": "练习表",
-        "phonetic": "",
-        "example": "Georgie Once again, our six minutes are up, but don't forget to test what you've learned with the worksheet on our website, bbclearningenglish.com."
       }
     ]
   },
