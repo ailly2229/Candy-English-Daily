@@ -1,5 +1,43 @@
 [
   {
+    "id": "easy-20261030",
+    "slug": "easy-talking-about-the-ocean",
+    "source": "easy",
+    "title": "Talking about the ocean",
+    "date": "2026-10-30",
+    "duration": 10,
+    "audio": "https://open.live.bbc.co.uk/mediaselector/6/redir/version/2.0/mediaset/audio-nondrm-download-rss/proto/https/vpid/p0pkbphb.mp3",
+    "content": "Becca and Neil have a real conversation in easy English about the ocean – find out who likes octopuses and who prefers dolphins! Learn some vocabulary about the sea and the animals which live in it. Get the video version of this podcast, plus a free worksheet and transcript here: https://www.bbc.co.uk/learningenglish/english/features/real-easy-english/261030Sign up to our email newsletter! It comes out weekly out Wednesdays: https://www.bbc.co.uk/send/u178220599And improve your English with more programmes at your level: https://www.bbc.co.uk/learningenglish/easy_course",
+    "transcript": "Neil\nHi Becca. How are you?\nBecca\nI'm well, thank you, Neil. How are you?\nNeil\nI'm very well, thanks. We're talking about oceans today, and I know you live near the sea. Is that because you like oceans?\nBecca\nYes, I do live near the seaside and I love oceans.\nNeil\nWell, we're going to be talking about the ocean in this episode, but people need to know that they can find a worksheet and a transcript to help them understand everything on our website, at bbclearningenglish.com. OK, Becca. So, why do you love the ocean?\nBecca\nOoh, I love the ocean because it's very big and in there lives lots of really cool sea creatures.\nNeil\nYeah. Have you got a favourite sea creature?\nBecca\nDifficult question for me to answer, Neil. I love them all, but I really like octopuses.\nNeil\nOctopuses? Why do you like octopuses?\nBecca\nThey're very intelligent, very smart creatures. And I also really like the way that they move through the water. They swim with their tentacles.\nNeil\nTentacles? That's the name for their legs.\nBecca\nYes. Yeah. And they can use their tentacles to also pick things up, which I think is really cool. There aren't many sea creatures that can do that.\nNeil\nDo you know what my favourite sea creature is, Becca?\nBecca\nI don't know, Neil. What is it?\nNeil\nI really like dolphins. And I like dolphins for the same reason that you like your octopuses - because they're very intelligent, they're very clever, and they're very beautiful, I think - very... they're very pretty to look at. I think they're much more beautiful than octopuses.\nBecca\nOoh, hold on now, Neil. I don't think I agree with you.\nNeil\nWell, it doesn't matter if you prefer octopuses or dolphins. There's lots of amazing creatures living in the sea, but there is actually a danger with the oceans. They're not really in a good condition.\nBecca\nNo. There are lots of threats to the oceans right now. So, a threat is a danger, and one of those threats is pollution.\nNeil\nYeah. Plastic is a real problem, isn't it? So, the material that lots of bottles are made from that isn't glass. That plastic ends up in the ocean, and then it's really bad for the sea creatures.\nBecca\nIt is, yeah. I've seen lots of videos of sea creatures maybe getting stuck in plastic bottles, and it's really sad. Pollution and single-use plastic are major, major threats to the ocean.\nNeil\nYes, there are lots of threats to the ocean. For example, the plastic pollution that you are talking about. Also, the oceans are getting warmer and that's a real threat because it can cause all kinds of environmental problems.\nBecca\nYou're right, Neil. There are lots of threats to the oceans. Do you do anything to protect the oceans?\nNeil\nWell, I don't go near the ocean very often, so I don't do anything directly. But I try not to use single-use plastic. So, single-use plastic is plastic that you use just once and then you throw it away.\nBecca\nSo, for example, single-use plastic straws for drinks - in the UK there are lots of places that don't use those anymore and I think that's a good way to help protect the oceans. OK. Neil, let's recap some of the vocabulary that we used in this conversation. We'll start with my favourite sea creature - that's an octopus. So, 'octo-' means eight and octopuses have eight tentacles, and those are the arms of the octopus.\nNeil\nOr legs.\nBecca\nOr legs, yeah!\nNeil\nWe also heard threat. Now, a threat is something that is a danger to something. For example, the oceans getting warmer is a threat to the environment.\nBecca\nAnd another example of a threat that we mentioned was pollution. And that is the things there that shouldn't be there. They could be chemicals or rubbish, and pollution is very harmful to whatever lives in that environment.\nNeil\nYes. And a big problem - a big part of that pollution is single-use plastic. 'Single-use' means it's something that you use just once and then throw it away. That's it for this episode of Real Easy English, but if you want to test yourself with a worksheet, you can find it on our website at bbclearningenglish.com.\nBecca\nAnd we'll be back next week with another episode of Real Easy English. Bye for now.\nNeil\nGoodbye!\nNow try this...\nWatch The London Letter Challenge.",
+    "pageUrl": "https://www.bbc.co.uk/learningenglish/english/features/real-easy-english/261030",
+    "worksheet": "https://downloads.bbc.co.uk/learningenglish/realeasyenglish/261030_REE_oceans_worksheet_.pdf",
+    "sentences": [
+      "Becca I'm well, thank you, Neil",
+      "Neil I'm very well, thanks",
+      "We're talking about oceans today, and I know you live near the sea"
+    ],
+    "vocabulary": [
+      {
+        "word": "single-use plastic",
+        "meaning": "plastic that you use just once and then you throw it away",
+        "phonetic": "",
+        "example": "Pollution and single-use plastic are major, major threats to the ocean."
+      },
+      {
+        "word": "conversation",
+        "meaning": "对话",
+        "phonetic": "",
+        "example": "Neil, let's recap some of the vocabulary that we used in this conversation."
+      },
+      {
+        "word": "worksheet",
+        "meaning": "练习表",
+        "phonetic": "",
+        "example": "Neil Well, we're going to be talking about the ocean in this episode, but people need to know that they can find a worksheet and a transcript to help them understand everything on "
+      }
+    ]
+  },
+  {
     "id": "easy-20261023",
     "slug": "easy-talking-about-job-interviews",
     "source": "easy",
@@ -1079,7 +1117,7 @@
       },
       {
         "word": "shading",
-        "meaning": "blocking the sun's light and heat",
+        "meaning": "blocking the Sun's light and heat",
         "phonetic": "",
         "example": "Some of the most important ones are first to cut solar gain, which is through things like shading."
       },
